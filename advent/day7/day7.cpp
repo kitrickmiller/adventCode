@@ -36,6 +36,7 @@ class Direc{
     void addFolder(Direc);
     void addFile(File);
     int sumFiles();
+    string getName();
 };
 
 Direc::Direc(string n){
@@ -48,6 +49,10 @@ void Direc::addFolder(Direc f){
 
 void Direc::addFile(File f){
     files.push_back(f);
+}
+
+string Direc::getName(){
+    return nam;
 }
 
 int sumFiles(){
@@ -65,6 +70,10 @@ int main(){
     string line;
     // push to second line.
     getline(file, line);
+    Direc *trav;
+    vector <Direc> trav_hist;
+    Direc main("/");
+    trav = &main;
 
     while (true){
         if (file.eof()) break;
@@ -86,19 +95,42 @@ int main(){
         }
         */
 
-        Direc *trav;
-        vector<Direc> trav_hist;
-        Direc main("/");
-
         // check if command
         if (tokens[0] == "$"){
             // if cd, point trav to new directory.
+            if (tokens[1] == "cd"){
+                if(tokens[2] != ".."){
+                    // cout << tokens[0] << " " << tokens[1] << " " << tokens[2] << endl;
+                    // cout << "folder name: " << trav->nam << ", # of folders inside folder: " << trav->folders.size() << endl;
+                    for (int i = 0; i < trav->folders.size(); i++){
+                        cout << "token name: " << tokens[2] << ", folder name: " << trav->folders[i].nam << endl;
+                        if (tokens[2] == trav->folders[i].nam){
+                            cout << "!!!\n";
+                            trav_hist.push_back(*trav);
+                            trav = &(trav)->folders[i];
+                        }
+                        cout << "folder name: " << trav->nam << endl;
+                    }
+                }
+                else{
+                    trav = &trav_hist.back();
+                    trav_hist.pop_back();
+                }
+            }
         }
         else if(tokens[0] == "dir"){
             // add dir to direc
+            cout << tokens[0] << " " << tokens[1] << endl;
+            Direc temp(tokens[1]);
+            trav->folders.push_back(temp);
+            for (int i = 0; i < trav->folders.size(); i++){
+                cout << trav->nam << ": folder added: " << trav->folders[i].getName() << endl;
+            }
         }
         else{
             // add file to dir
+            File temp(tokens[1], stoi(tokens[0]));
+            trav->files.push_back(temp);
         }
 
         // clear tokens
