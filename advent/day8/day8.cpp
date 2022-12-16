@@ -138,3 +138,18 @@ int main(){
     cout << vis_trees;
     return 0;
 }
+
+bool checker(int **trees, int x, int y, int xMax, int yMax, char dir){
+    int check = trees[x][y];
+    switch(dir){
+        case 'a':
+            for (int x1 = x - 1; x1 <= 0; x1++){
+                if (trees[x1][y] < check){
+                    
+                }
+            } 
+        case 'b':
+        case 'r':
+        case 'l':
+    }
+}
