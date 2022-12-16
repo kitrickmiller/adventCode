@@ -37,7 +37,7 @@ class Direc{
     Direc(string, Direc*);
     void addFolder(Direc*);
     void addFile(File*);
-    int sum();
+    long sum();
     string getName();
 };
 
@@ -58,18 +58,19 @@ void Direc::addFile(File *f){
     files.push_back(f);
 }
 
-int Direc::sum(){
-    int summation; 
-    if (folders.size() > 0){
-        for (int i = 0; i < folders.size(); i++){
-            summation += folders[i]->sum();
-        }
-    }
+long Direc::sum(){
+    long summation = 0; 
 
     for (int i = 0; i < files.size(); i++){
+        // cout << files[i]->nam << " size: " << files[i]->size << endl;
         summation += files[i]->size;
     }
 
+    for (int i = 0; i < folders.size(); i++){
+        // cout << folders[i]->n << endl;
+        summation += folders[i]->sum();
+    }
+    
     return summation;
 }
 
@@ -80,18 +81,18 @@ string Direc::getName(){
 int tokenOne(string);
 Direc *newDirec(string, Direc*);
 File *newFile(string, int);
+long sumCounter(Direc*);
+long sumFinder(Direc*, int);
 
 
 int main(){
+    cout.flush();
     ifstream file;
-    cout << "?\n" << endl;
     file.open("input7.txt");
     if (!file.is_open()){
         cout << "error\n";
         return 1;
     }
-
-    cout << "?\n" << endl;
 
     string line;
     // init first direc
@@ -116,7 +117,7 @@ int main(){
         // handle cd
         if (tokenOne(tokens[0]) == 1 && tokens[1] == "cd"){
             // handle ..
-            if (tokens[2] != ".."){
+            if (tokens[2] == ".."){
                 trav = trav->parent;
             }
             else{ // handle entering a direc
@@ -135,14 +136,12 @@ int main(){
         else if (tokenOne(tokens[0]) == 3){
             trav->addFile(newFile(tokens[1], stoi(tokens[0])));
         }
-
-        cout << "?\n" << endl;
-
     }
 
     trav = &main;
-    cout << "Did we make it?\n";
     cout << trav->sum() << endl;
+    cout << sumCounter(&main) << endl;
+    cout << sumFinder(&main, main.sum());
 
     return 0;
 }
@@ -169,5 +168,27 @@ File *newFile(string name, int size){
     return temp;
 }
 
+long sumCounter(Direc *point){
+    long sum = 0;
+    for (int i = 0; i < point->folders.size(); i++){
+        sum += sumCounter(point->folders[i]);
+        if (point->folders[i]->sum() <= 100000)
+            sum += point->folders[i]->sum();
+    }
+
+    return sum;
+}
+
+long sumFinder(Direc *point, int smallestPos){
+
+    for (int i = 0; i < point->folders.size(); i++){
+        if ((point->folders[i]->sum() < smallestPos) && (point->folders[i]->sum() > 8748071)){
+            smallestPos = point->folders[i]->sum();
+        }
+        smallestPos = sumFinder(point->folders[i], smallestPos); 
+    }
+
+    return smallestPos;
+}
 
 
