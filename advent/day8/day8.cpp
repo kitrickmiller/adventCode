@@ -5,6 +5,9 @@
 
 using namespace std;
 
+bool checker(int **, int , int , int , int , char );
+int scenicRating(int**, int, int, int, int);
+
 int main(){
     ifstream file;
     file.open("input8.txt");
@@ -39,117 +42,195 @@ int main(){
 
         for (int j = 0; j < line.length(); j++){
             trees[i][j] = line[j] - 48;
-            cout << trees[i][j] << " ";
+            // cout << trees[i][j] << " ";
         }
         i++;
-        cout << endl;
+        // cout << endl;
     }
     
     // correctly arrayed :)
     cout << "counter: " << counter << endl;
 
     int vis_trees = 0;
-    for (int x = 0; x < counter; x++){
-        for (int y = 0; y < line.length(); y++){
-            if ((y == 0) || (x == 0) || (x == counter - 1) || (y == line.length() - 1)){
+    cout << "line length: " << line.length() << endl;
+    
+    for (int k = 0; k < counter; k++){
+        for (int j = 0; j < line.length(); j++){
+            // cout << "k: " << k << " j: " << j << endl;
+            if (k == 0 || j == 0 || k == (counter - 1) || j == (line.length() - 1)){
                 vis_trees++;
+                // cout << "tree added\n";
             }
-            else{
-                // trees to left
-                int blocked = trees[x][y];
-                for (int x1 = x - 1; x1 >= 0; x1--){
-                    cout << "check left\n";
-                    if (trees[x1][y] < blocked){
-                        if (x1 == 0){
-                            vis_trees++;
-                            cout << "found!!\n";
-                            break;
-                        }
-                        else{
-                            blocked = trees[x1][y];
-                        }
-                    }
-                    else{
-                        break;
-                    }
-                }
-
-                // trees to right
-                blocked = trees[x][y];
-                for (int x2 = x + 1; x2 < counter; x2++){
-                    cout << "check right\n";
-                    cout << "x2: " << x2 << "y: " << y << endl;
-                    if (trees[x2][y] < blocked){
-                        if (x2 == counter - 1){
-                            vis_trees++;
-                            cout << "found!!\n";
-                            break;
-                        }
-                        else{
-                            blocked = trees[x2][y];
-                        }
-                    }
-                    else{
-                        break;
-                    }
-                }
-
-                // trees below
-                blocked = trees[x][y];
-                for (int y2 = y + 1; y2 < line.length() - 1; y2++){
-                    cout << "check below\n";
-                    if (trees[x][y2] < blocked){
-                        if (y2 == counter - 1){
-                            vis_trees++;
-                            cout << "found!!\n";
-                            break;
-                        }
-                        else{
-                            blocked = trees[x][y2];
-                        }
-                    }
-                    else{
-                        break;
-                    }
-                }
-
-                // trees above
-                blocked = trees[x][y];
-                for (int y1 = y - 1; y1 >= 0; y1--){
-                    cout << "check above\n";
-                    if (trees[x][y1] < blocked){
-                        if (y1 == 0){
-                            vis_trees++;
-                            cout << "found!!\n";
-                            break;
-                        }
-                        else{
-                            blocked = trees[x][y1];
-                        }
-                    }
-                    else{
-                        break;
-                    }
-                }
+            else if (checker(trees, k, j, (counter - 1), (line.length() - 1), 'a') == true){
+                vis_trees++;
+                // cout << "tree added!\n";
+            }
+            else if(checker(trees, k, j, (counter - 1), (line.length() - 1), 'b') == true){
+                vis_trees++;
+                // cout << "tree added!\n";
+            }
+            else if(checker(trees, k, j, (counter - 1), (line.length() - 1), 'r') == true){
+                vis_trees++;
+                // cout << "tree added!\n";
+            }
+            else if(checker(trees, k, j, (counter - 1), (line.length() - 1), 'l') == true){
+                vis_trees++;
+                // cout << "tree added!\n";
             }
         }
     }
 
-    cout << vis_trees;
+    int highest = 0; 
+
+    for (int k = 0; k < counter; k++){
+        for (int j = 0; j < line.length(); j++){
+            if (scenicRating(trees, k, j, (counter - 1), (line.length() - 1)) > highest){
+                highest = scenicRating(trees, k, j, (counter - 1), (line.length() - 1));
+            }
+        }
+    }
+
+    cout << vis_trees << endl;
+    cout << highest;
     return 0;
 }
 
 bool checker(int **trees, int x, int y, int xMax, int yMax, char dir){
     int check = trees[x][y];
     switch(dir){
-        case 'a':
-            for (int x1 = x - 1; x1 <= 0; x1++){
+    case 'a':
+            // cout << "checking above...\n";
+            for (int x1 = x - 1; x1 >= 0; x1--){
+                // cout << "x1: " << x1 << " y: " << y << endl;
                 if (trees[x1][y] < check){
-                    
+                    if (x1 == 0){
+                        return true;
+                    }
                 }
-            } 
-        case 'b':
-        case 'r':
-        case 'l':
+                else{
+                    break;
+                } 
+            }
+            break; 
+    case 'b':
+            // cout << "checking below...\n";
+            for (int x1 = x + 1; x1 <= xMax; x1++){
+                // cout << "x1: " << x1 << " y: " << y << endl;
+                if (trees[x1][y] < check){
+                    if (x1 == xMax){
+                        return true;
+                    }
+                }
+                else{
+                    break;
+                } 
+            }
+            break;
+    case 'r':
+            // cout << "checking right...\n";
+            for (int y1 = y + 1; y1 <= yMax; y1++){
+                // cout << "x: " << x << " y1: " << y1 << endl;
+                // cout << "check: " << check << " > " << trees[x][y1] << endl;
+                if (trees[x][y1] < check){
+                    if (y1 == yMax){
+                        return true;
+                    }
+                }
+                else{
+                    break;
+                } 
+            }
+            break;
+    case 'l':
+            // cout << "checking left...\n";
+            for (int y1 = y - 1; y1 > -1; y1--){
+                // cout << "x: " << x << " y1: " << y1 << endl;
+                // cout << "val checked: " << trees[x][y1] << "versus check: " << check << endl;
+                if (trees[x][y1] < check){
+                    if (y1 == 0){
+                        return true;
+                    }
+                }
+                else{
+                    break;
+                } 
+            }
+            break;
     }
+    return false;
+}
+
+int scenicRating(int** trees, int x, int y, int xMax, int yMax){
+    int aboveRtg = 0, belowRtg = 0, rightRtg = 0, leftRtg = 0;
+    int check1 = trees[x][y];
+    int check = 10;
+    // above check
+
+    
+    for (int i = (x - 1); i >= 0; i--){
+        if (trees[i][y] < check && trees[i][y] < check1){
+            aboveRtg++;
+            // check = trees[i][y];
+        }
+        else{
+            break;
+        }
+    }
+    cout << "abv rtg: " << aboveRtg << endl;
+    // below check
+    check = 10;
+    for (int i = (x + 1); i <= xMax; i++){
+        if (trees[i][y] < check && trees[i][y] < check1){
+            belowRtg++;
+            // check = trees[i][y];
+        }
+        else{
+            break;
+        }
+    }
+    cout << "blw rtg: " << belowRtg << endl;
+    // right check
+    check = 10;
+    for (int i = (y + 1); i <= yMax; i++){
+        if (trees[x][i] < check && trees[x][i] < check1){
+            rightRtg++;
+            cout << "Not broken!\n";
+            // check = trees[x][i];
+        }
+        else{
+            cout << "broken\n";
+            break;
+        }
+    }
+    cout << "rit rating: " << rightRtg << endl;
+    // left check
+    check = 10;
+    for (int i = (y - 1); i >= 0; i--){
+        if (trees[x][i] < check && trees[x][i] < check1){
+            leftRtg++;
+            // check = trees[x][i];
+        }
+        else{
+            break;
+        }
+    }
+    cout << "let rating: " << leftRtg << endl;
+
+    if (x == 0){
+        aboveRtg = 0;
+    }
+
+    if (x == xMax){
+        belowRtg = 0;
+    }
+
+    if (y == 0){
+        leftRtg = 0;
+    }
+
+    if (y == yMax){
+        rightRtg = 0;
+    }
+    
+    return (aboveRtg * belowRtg * rightRtg * leftRtg);
 }
