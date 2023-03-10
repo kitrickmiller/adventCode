@@ -60,7 +60,7 @@ int main(){
     }
 
     int sum = CPUcycle(commands, counter);
-    cout << sum << endl;
+    cout << "Sum of cycles: " << sum << endl;
     return 0;
 }
 
@@ -156,7 +156,7 @@ void cycleCheck(int counter, int currentSum, int * refSum){
         }
         counter += 200;
     }
-    if ((counter - 1) == 40 || (counter - 1) == 80 || (counter - 1) == 120 || (counter - 1) == 160 || (counter - 1) == 200 || (counter - 1) == 240){
+    if ((counter) == 40 || (counter) == 80 || (counter) == 120 || (counter) == 160 || (counter) == 200 || (counter) == 240){
         cout << endl;
     }
 }
